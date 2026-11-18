@@ -1,5 +1,5 @@
---  Loesungen zur Schummel-Galerie: eigene Projekt, gleicher Unit-Name.
---  Beweisen mit:
+--  Loesungen zum Zulassungs-Audit: eigenes Projekt, gleiche Unit-Namen
+--  wie im Experiment. Beweisen mit:
 --
 --    alr exec -- gnatprove -P experiment/loesungen/loesungen.gpr --report=all
 
@@ -8,10 +8,8 @@ project Loesungen is
    for Source_Dirs use (".");
    for Object_Dir use "obj";
 
-   package Naming is
-      for Spec ("Cheating") use "cheating.ads";
-      for Body ("Cheating") use "cheating.adb";
-   end Naming;
+   --  avionics.ads/.adb folgen der Standard-Namensregel, ein Naming-
+   --  Paket ist nicht nötig.
 
    --  Gleicher SPARK_Mode-Default wie das Hauptprojekt (spark.adc, UG 4.2.1).
    package Compiler is

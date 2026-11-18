@@ -15,8 +15,9 @@ Avionik über Flugsicherung und medizinischer Firmware bis zur E-Mobilität.
 Alles, was du vorher brauchst: Container starten und `tutorial/TUTORIAL.md`
 durcharbeiten.
 
-Wer mehr will (optional): `experiment/`, die Schummel-Galerie. Grüner Code,
-der trotzdem falsch sein darf. Lösen optional, Spass garantiert.
+Wer mehr will (optional): `experiment/`, das Zulassungs-Audit. Du bist
+Prüfer:in einer Kleinflugzeug-Avionik — jedes Unterprogramm rot aus
+einem anderen Grund. Lösen optional, Spass garantiert.
 
 1. Voraussetzungen
 - [Docker](https://docs.docker.com/get-docker/)

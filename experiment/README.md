@@ -1,39 +1,51 @@
-# Schummel-Galerie (optional)
+# Zulassungs-Audit (optional)
 
-Dateien: `experiment/cheating.ads` (Spezifikation) und
-`experiment/cheating.adb` (Code). Zwei Unterprogramme: `Withdraw`
-(Geld abheben) und `Index_Of` (in einem Feld suchen).
+Dateien: `experiment/avionics.ads` (Spezifikation) und
+`experiment/avionics.adb` (Code).
 
-Beide sind korrekt programmiert und grün. Ihre Spezifikationen haben aber
-**jeweils mindestens drei verschiedene Lücken**.
+Du bist Prüfer:in bei der (fiktiven) Zulassung einer Kleinflugzeug-Avionik:
+genau dieses Package, eine Box im Cockpit. Der Hersteller wirbt:
+„Alles SPARK, alles bewiesen." Stimmt nicht — **jedes der sechs
+Unterprogramme ist rot, und jedes aus einem anderen Grund.** Genau die
+Fehlerarten, die der SPARK-Verifier standardmässig findet.
 
-**Ziel:** Ändere den Code (`cheating.adb`) so, dass er falsch ist, aber
-grün bleibt. Die Spezifikation (`cheating.ads`) darfst du nicht ändern.
-Jede Lücke, die du findest, postest du in den Chat:
+**Ziel:** Diagnostiziere pro Fall, WARUM gnatprove meckert, und poste
+deinen Fund im Chat:
 
-> Lücke: ...  Schummel-Code: ...
+> Fund N: Kategorie — Erklärung
 
-Prüfen nach jeder Schummelei:
+Eine Kategorie pro Unterprogramm (ein Fall kann zwei Meldungen werfen —
+dann gehören sie zur gleichen Ursache). Namen der Kategorien darfst du
+frei wählen; es zählt, dass die Erklärung stimmt.
+
+Prüfen:
 
 ```bash
-alr gnatprove -U --report=all
+alr gnatprove -u avionics --report=all
 ```
 
-Fang an, wo du willst.
+Alles, was motzt (`medium:`, `high:`, `warning:`), ist ein Fall. Die
+Meldungen zu zitieren hilft beim Erklären. Fang an, wo du willst —
+Fahrwerk, Klappen, Kurs, Höhe oder Sensoren.
 
 ---
 
-### SPARK-Besonderheit
+### Zwei Arten von Meckern
 
-gnatprove beweist Range- und Overflow-Checks **immer mit**: Mit falschen
-Rechnungen schummeln (`New_Balance := Balance + 1_000_000`) fällt sofort
-auf. Wer schummeln will, muss ohne falsche Rechnung schummeln. (Und was
-ein `New_Balance >= 0` in der Spezifikation wäre, macht hier der Typ
-`Natural` von allein.)
+- **Fluss-Analyse**: schneller als der Beweis, schaut nur, wie Werte
+  durchs Unterprogramm fliessen — nie, welche Werte es sind
+  (uninitialisiert gelesen, ineffektive Statements, Abhängigkeiten).
+- **Beweis** (`medium:`, `high:`): Kontrakte und Checks gegen alle
+  Eingaben. Die Meldung nennt oft ein Gegenbeispiel — die konkreten
+  Werte, die den Check sprengen. Das ist der schnellste Weg zur Diagnose.
 
-Die Lücken liegen deshalb auf einer anderen Ebene, und zwar genau dort, wo
-auch echte Spezifikations-Bugs liegen. Das ist der Punkt: Der Verifier
-auditiert den generierten Code gegen DEINE Spezifikation. Ist die
-Spezifikation schwach, findet er genau diese Schwäche.
+Und die Typen machen einen Teil der Arbeit gratis: `type Feet is range
+0 .. 20_000` beweist alle Range-Checks auf diese Werte mit — niemand kann
+eine Höhe ausserhalb des Typs hineinrechnen, ohne dass gnatprove rot wird.
 
-Alle Lücken mit Beispielen und dichter Spezifikation in `loesungen/`.
+Diagnosen und Fixes aller sechs Fälle in `loesungen/` — ein eigenes
+Projekt, das komplett grün ist:
+
+```bash
+alr exec -- gnatprove -P experiment/loesungen/loesungen.gpr --report=all
+```
