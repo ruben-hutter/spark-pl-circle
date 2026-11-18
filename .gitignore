@@ -1,0 +1,23 @@
+# Alire Workspace-Metadaten (entstehen beim ersten alr-Aufruf)
+/alire/
+/config/
+.als-alire
+
+# Build- und Beweis-Artefakte
+/bin/
+/obj/
+.gnatprove/
+gnatprove.out
+*.o
+*.ali
+
+# Loesungen haben eigene Objekt-Ordner
+tutorial/loesungen/obj/
+experiment/loesungen/obj/
+vericoding/runde1/obj/
+vericoding/runde2/obj/
+vericoding/loesungen/runde1/obj/
+vericoding/loesungen/runde2/obj/
+
+# Nix-DevShell (direnv)
+.direnv/
