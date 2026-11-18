@@ -1,4 +1,6 @@
-package body Loops with SPARK_Mode is
+package body Loops
+  with SPARK_Mode
+is
 
    --  Beispiel (fertig):
    procedure Compute_Sum (N : Natural; S : out Natural) is

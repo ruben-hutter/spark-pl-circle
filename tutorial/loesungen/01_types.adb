@@ -1,4 +1,6 @@
-package body Types with SPARK_Mode is
+package body Types
+  with SPARK_Mode
+is
 
    procedure Variables is
       X : Integer := 5;

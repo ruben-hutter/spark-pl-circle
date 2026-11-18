@@ -1,4 +1,6 @@
-package body Hello with SPARK_Mode is
+package body Hello
+  with SPARK_Mode
+is
 
    function Absolute_Value (X : Small_Number) return Integer is
    begin

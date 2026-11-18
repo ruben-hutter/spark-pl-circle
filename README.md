@@ -60,6 +60,8 @@ alr gnatprove -U --report=all          # alles verifizieren (auch die Fehler zei
 alr gnatprove -u hello --report=all    # nur ein Kapitel verifizieren
 alr build                              # bauen
 ./bin/spark_pl_circle                  # ausführen
+gnatformat -P spark_pl_circle.gpr -U --charset utf-8 --check   # Stil prüfen
+gnatformat -P spark_pl_circle.gpr -U --charset utf-8           # Stil anwenden
 ```
 
 `-U` = alle Units prüfen (ohne prüft gnatprove nur das Hauptprogramm).
@@ -75,6 +77,13 @@ alr fängt den Help-Schalter vorher ab).
 Einzelnes Unterprogramm geht mit
 `--limit-subp=00_hello.adb:3` (nur Dateiname, ohne `tutorial/`-Präfix).
 
+Formatierung: Ada-Dateien folgen dem GNAT-Stil (3 Leerzeichen, Zeilen
+bis 79 Zeichen); `gnatformat` ist der Kanon und ist im dev container
+wie in der Nix-DevShell installiert. `--check` steigt mit Exit-Code 1
+aus, wenn etwas unformatiert ist — gut für CI. Die `loesungen/`-Ordner
+liegen außerhalb des Projekts und werden einzeln formatiert:
+`gnatformat --charset utf-8 --no-project <datei>`.
+
 ---
 
 ## Editoren
@@ -88,6 +97,9 @@ die Konfiguration ist im Repo committet und greift automatisch:
   sind über `.vscode/settings.json` vorkonfiguriert.
 - **Neovim**: nichts zu tun, das eingebaute EditorConfig-Plugin wendet
   `.editorconfig` an.
+
+Über die Basis-Einrückung hinaus entscheidet nicht die Hand, sondern
+`gnatformat` (siehe Befehle): fortlaufende Zeilen, Umbrüche, Aspekte.
 
 ---
 

@@ -93,8 +93,6 @@ gnatprove, eine Compiler-Warnung von `alr build`).
 
 ## Kapitel 1: Typen
 
-Weiterlesen: [Runtime Errors](https://learn.adacore.com/courses/intro-to-spark/chapters/03_Proof_Of_Program_Integrity.html#runtime-errors)
-
 `tutorial/01_types.adb`
 
 ```ada
@@ -127,8 +125,6 @@ c) Quantoren.
 
 ## Kapitel 2: Funktionen
 
-Weiterlesen: [Contracts](https://learn.adacore.com/courses/intro-to-spark/chapters/03_Proof_Of_Program_Integrity.html#contracts)
-
 `tutorial/02_functions.ads`
 
 ```ada
@@ -148,8 +144,6 @@ wäre rot.
 asserts am Ende beweisen, dass die Definitionen zu den Tests passen.
 
 ## Kapitel 3: Kontrakte
-
-Weiterlesen: [Additional Assertions and Contracts](https://learn.adacore.com/courses/intro-to-spark/chapters/03_Proof_Of_Program_Integrity.html#additional-assertions-and-contracts)
 
 `tutorial/03_contracts.ads` und `.adb`
 
@@ -180,8 +174,6 @@ Overflow!) und **d** (`Contract_Cases`).
 b und c sind optional.
 
 ## Kapitel 4: Schleifen
-
-Weiterlesen: [Loop Invariants](https://learn.adacore.com/courses/intro-to-spark/chapters/05_Proof_Of_Functional_Correctness.html#loop-invariants)
 
 `tutorial/04_loops.ads` und `.adb`
 
@@ -221,8 +213,6 @@ Terminierungs-Experiment (`C := C + 1` zu `C := C + 0` ändern und die
 Meldung anschauen, danach zurückändern).
 
 ## Kapitel 5: Ausführen
-
-Weiterlesen: [Executable Semantics](https://learn.adacore.com/courses/intro-to-spark/chapters/03_Proof_Of_Program_Integrity.html#executable-semantics)
 
 `tutorial/05_run.adb`
 

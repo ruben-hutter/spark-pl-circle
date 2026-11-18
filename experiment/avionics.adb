@@ -2,7 +2,9 @@
 --  Absichtlich so gelassen wie vom Hersteller geliefert: jedes
 --  Unterprogramm ist aus einem anderen Grund rot.
 
-package body Avionics with SPARK_Mode is
+package body Avionics
+  with SPARK_Mode
+is
 
    --  1) Maximum über das Sensor-Array suchen.
    function Max_Speed (S : Sensor_Array) return Knots is
@@ -20,9 +22,9 @@ package body Avionics with SPARK_Mode is
    procedure Swap_Course (Heading, Course : in out Degrees) is
       Tmp : Degrees;
    begin
-      Tmp     := Heading;
+      Tmp := Heading;
       Heading := Course;
-      Course  := Heading;
+      Course := Heading;
    end Swap_Course;
 
    --  3) Fahrwerk gemäss Schalter stellen.

@@ -6,7 +6,9 @@
 --  Aufgabe: Probiere die TODO-Stellen aus: Ändere, schau, was rot wird,
 --           und mach es wieder grün. Nie ein assert löschen oder abschwächen!
 
-package Types with SPARK_Mode is
+package Types
+  with SPARK_Mode
+is
 
    --  Unterdrückt "subprogram ... has no effect" von gnatprove: Beide
    --  Prozeduren nutzen nur lokale Variablen, ändern also nichts

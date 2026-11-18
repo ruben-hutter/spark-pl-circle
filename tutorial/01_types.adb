@@ -6,7 +6,9 @@
 --  Aufgabe: Ändere die Zeilen mit TODO, bis alles grün ist.
 --           Nie ein assert löschen oder abschwächen!
 
-package body Types with SPARK_Mode is
+package body Types
+  with SPARK_Mode
+is
 
    procedure Variables is
       X : Integer := 5;
@@ -21,12 +23,14 @@ package body Types with SPARK_Mode is
 
    --  A und B kommen von "aussen": gnatprove kennt ihre Werte NICHT,
    --  nur ihren Typ. Literal-Rechnen reicht hier nicht mehr.
-   procedure Ranges (A, B : Integer) is   -- TODO b1)
+   procedure Ranges (A, B : Integer) is
+      -- TODO b1)
       subtype Percent_Sum is Integer range 0 .. 100;   -- TODO b2)
 
       type Score_Array is array (1 .. 3) of Percent;
       Score : Score_Array := (10, 20, 30);
-      Total : Percent_Sum := A + B;      -- rot: overflow + range check might fail
+      Total : Percent_Sum :=
+        A + B;      -- rot: overflow + range check might fail
    begin
       --  b1) Diese asserts sollen für JEDE Eingabe gelten. Mit unbeschränktem
       --      Integer sind sie rot. Welcher Typ macht sie beweisbar?

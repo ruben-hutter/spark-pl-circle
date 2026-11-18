@@ -1,7 +1,9 @@
 --  Lösungen zum Zulassungs-Audit: die gefixten Körper.
 --  (Spec-Seite und Diagnosen: avionics.ads hier im Ordner.)
 
-package body Avionics with SPARK_Mode is
+package body Avionics
+  with SPARK_Mode
+is
 
    --  Fund 1-Fix: Max initialisieren (0 ist in Knots enthalten, das
    --  Leer-Maximum ist also 0 und leere Felder sind mitgedeckt).
@@ -20,9 +22,9 @@ package body Avionics with SPARK_Mode is
    procedure Swap_Course (Heading, Course : in out Degrees) is
       Tmp : Degrees;
    begin
-      Tmp     := Heading;
+      Tmp := Heading;
       Heading := Course;
-      Course  := Tmp;
+      Course := Tmp;
    end Swap_Course;
 
    --  Fund 3: Code unverändert — der Fehler lag im Contract (avionics.ads).
@@ -67,8 +69,8 @@ package body Avionics with SPARK_Mode is
    function First_Above (S : Sensor_Array; Limit : Knots) return Natural is
    begin
       for I in S'Range loop
-         pragma Loop_Invariant
-           (for all K in S'First .. I - 1 => S (K) <= Limit);
+         pragma
+           Loop_Invariant (for all K in S'First .. I - 1 => S (K) <= Limit);
          if S (I) > Limit then
             return I;
          end if;

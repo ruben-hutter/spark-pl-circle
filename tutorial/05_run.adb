@@ -18,9 +18,8 @@ procedure Run with SPARK_Mode is
    is (N * (N + 1) / 2)
    with Pre => N <= 1_000;
 
-   procedure Compute_Sum (N : Natural; S : out Natural) with
-      Pre  => N <= 1000,
-      Post => S = Sum (N)
+   procedure Compute_Sum (N : Natural; S : out Natural)
+   with Pre => N <= 1000, Post => S = Sum (N)
    is
    begin
       S := 0;
@@ -36,14 +35,14 @@ begin
    Compute_Sum (10, S);
    Ada.Text_IO.Put_Line ("Summe 1..10 =" & Natural'Image (S));
 
-   --  Bonus: Fluss-Analyse (der zweite Analyse-Modus von SPARK neben dem
-   --  Beweisen). Einkommentieren und beides ausführen:
-   --    alr build      -> warning: variable "X" is read but never assigned
-   --    alr gnatprove  -> high: "X" is not initialized
-   --
-   --  declare
-   --     X : Integer;
-   --  begin
-   --     Ada.Text_IO.Put_Line (Integer'Image (X));
-   --  end;
+--  Bonus: Fluss-Analyse (der zweite Analyse-Modus von SPARK neben dem
+--  Beweisen). Einkommentieren und beides ausführen:
+--    alr build      -> warning: variable "X" is read but never assigned
+--    alr gnatprove  -> high: "X" is not initialized
+--
+--  declare
+--     X : Integer;
+--  begin
+--     Ada.Text_IO.Put_Line (Integer'Image (X));
+--  end;
 end Run;

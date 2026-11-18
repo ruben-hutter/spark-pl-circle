@@ -4,7 +4,9 @@
 --  garantiert: Der Wert ist IMMER zwischen 0 und 100.
 --  Der Compiler prüft das zur Laufzeit, gnatprove beweist: Der Check feuert nie.
 
-package Types with SPARK_Mode is
+package Types
+  with SPARK_Mode
+is
 
    subtype Percent is Integer range 0 .. 100;
 

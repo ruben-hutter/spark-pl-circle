@@ -9,14 +9,10 @@
 --  und Fix. Wo beides denkbar war, stehen beide Wege im Kommentar.
 --  In dieser Datei ist jeweils der SPEC-Teil gefixt, in avionics.adb
 --  der CODE-Teil — genau da, wo der Fehler lag.
---
---  "Kapitel N" meint den AdaCore-Kurs "Introduction to SPARK"; die
---  Funde sind dessen Musterbeispiele:
---     https://learn.adacore.com/courses/intro-to-spark/chapters/02_Flow_Analysis.html
---     https://learn.adacore.com/courses/intro-to-spark/chapters/03_Proof_Of_Program_Integrity.html
---     https://learn.adacore.com/courses/intro-to-spark/chapters/05_Proof_Of_Functional_Correctness.html
 
-package Avionics with SPARK_Mode is
+package Avionics
+  with SPARK_Mode
+is
 
    type Feet is range 0 .. 20_000;
    type Knots is range 0 .. 1_000;
@@ -30,7 +26,7 @@ package Avionics with SPARK_Mode is
 
    subtype Service_Ceiling is Feet range 0 .. 15_000;
 
-   --  Fund 5: INFORMATION FEHLT (Kapitel 3, Muster "Increase")
+   --  Fund 5: INFORMATION FEHLT (Muster "Increase" im AdaCore-Kurs)
    --  gnatprove meldete:
    --     medium: postcondition might fail, cannot prove Altitude = Max_Altitude
    --  Warum: Max_Altitude war eine VARIABLE Global. gnatprove darf beim
@@ -47,7 +43,7 @@ package Avionics with SPARK_Mode is
    --         +1'000 gerechnet — nur darüber wird gesättigt.)
    Max_Altitude : constant Service_Ceiling := 15_000;
 
-   --  Fund 1: UNINITIALISIERT GELESEN (Kapitel 2: Fluss-Analyse)
+   --  Fund 1: UNINITIALISIERT GELESEN (Fluss-Analyse)
    --  gnatprove meldete (zweimal, gleiche Ursache):
    --     medium: "Max" might not be initialized
    --  Warum: Max wurde im Body vor der Schleife nie initialisiert —
@@ -58,7 +54,7 @@ package Avionics with SPARK_Mode is
    --  Post sagt ja nur, was gilt, wenn der Körper sauber fliesst.)
    function Max_Speed (S : Sensor_Array) return Knots;
 
-   --  Fund 2: INEFFEKTIVES STATEMENT (Kapitel 2, Muster "Swap")
+   --  Fund 2: INEFFEKTIVES STATEMENT (Fluss-Analyse, Muster "Swap" im AdaCore-Kurs)
    --  gnatprove meldete:
    --     warning: unused initial value of "Heading"
    --  Warum: Tmp := Heading ist wirkungslos — Tmp wird nie gelesen.
@@ -69,7 +65,7 @@ package Avionics with SPARK_Mode is
    --  Fehlerklasse: Bug im CODE. Fix im Body: Course := Tmp.
    procedure Swap_Course (Heading, Course : in out Degrees);
 
-   --  Fund 3: FALSCHER DEPENDS-CONTRACT (Kapitel 2: Fluss-Analyse)
+   --  Fund 3: FALSCHER DEPENDS-CONTRACT (Fluss-Analyse)
    --  gnatprove meldete:
    --     medium: missing dependency "Gear_Down => Down"
    --     medium: incorrect dependency "null => Down"
@@ -81,11 +77,11 @@ package Avionics with SPARK_Mode is
    --  Fahrwerksschalter tun soll. Fix hier: die wahre Abhängigkeit
    --  angeben. (Global => (...) wäre die grobere Variante desselben
    --  Contracts.)
-   procedure Set_Gear (Down : Boolean) with
-      Depends => (Gear_Down => Down);
+   procedure Set_Gear (Down : Boolean)
+   with Depends => (Gear_Down => Down);
 
-   --  Fund 4: CONTRACT_CASES-GUARDS GELTEN BEIM EINTRITT (Kapitel 3,
-   --  Muster "Incr_Until")
+   --  Fund 4: CONTRACT_CASES-GUARDS GELTEN BEIM EINTRITT (Muster
+   --  "Incr_Until" im AdaCore-Kurs)
    --  gnatprove meldete:
    --     medium: contract case might fail   (Fall others => Pos = Pos'Old)
    --  Warum: Guards werden VOR dem Aufruf bewertet, mit den Werten beim
@@ -98,18 +94,18 @@ package Avionics with SPARK_Mode is
    --  ein normales Post mit if-Ausdruck
    --     Post => (if Pos'Old /= Full then Pos = Full else Pos = Pos'Old)
    --  — dort bezieht sich 'Old ausdrücklich auf den Eintritt.)
-   procedure Extend_Flaps (Pos : in out Flap_Position) with
-      Contract_Cases =>
-        (Pos /= Full => Pos = Full,
-         others      => Pos = Pos'Old);
+   procedure Extend_Flaps (Pos : in out Flap_Position)
+   with Contract_Cases => (Pos /= Full => Pos = Full, others => Pos = Pos'Old);
 
    --  Fund 5: siehe Max_Altitude oben.
-   procedure Climb (Altitude : in out Feet) with
-      Post => (if Altitude'Old < Max_Altitude
-               then Altitude > Altitude'Old
-               else Altitude = Max_Altitude);
+   procedure Climb (Altitude : in out Feet)
+   with
+     Post =>
+       (if Altitude'Old < Max_Altitude
+        then Altitude > Altitude'Old
+        else Altitude = Max_Altitude);
 
-   --  Fund 6: INVARIANTE FEHLT (Kapitel 5, Muster "Find")
+   --  Fund 6: INVARIANTE FEHLT (Muster "Find" im AdaCore-Kurs)
    --  gnatprove meldete:
    --     medium: postcondition might fail, cannot prove First_Above'Result in S'Range
    --  Warum: Nach der Schleife weiss gnatprove NUR die Invarianten und
@@ -124,11 +120,13 @@ package Avionics with SPARK_Mode is
    --  nicht — nur vergleichen und indizieren —, also gibt es hier nichts
    --  gegen Overflow zu sichern. Eine Summen-Variante bräuchte zusätzlich
    --  eine Pre, die die Anzahl Runden begrenzt, siehe Kapitel 4.)
-   function First_Above (S : Sensor_Array; Limit : Knots) return Natural with
-      Post =>
-        (if (for all I in S'Range => S (I) <= Limit)
-           then First_Above'Result = 0
-         else First_Above'Result in S'Range
-                and then S (First_Above'Result) > Limit);
+   function First_Above (S : Sensor_Array; Limit : Knots) return Natural
+   with
+     Post =>
+       (if (for all I in S'Range => S (I) <= Limit)
+        then First_Above'Result = 0
+        else
+          First_Above'Result in S'Range
+          and then S (First_Above'Result) > Limit);
 
 end Avionics;

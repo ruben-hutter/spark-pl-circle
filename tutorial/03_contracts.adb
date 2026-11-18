@@ -1,4 +1,6 @@
-package body Contracts with SPARK_Mode is
+package body Contracts
+  with SPARK_Mode
+is
 
    function Absolute_Value (X : Integer) return Integer is
    begin
@@ -40,7 +42,9 @@ package body Contracts with SPARK_Mode is
       Divide (10, 2, Q);
       pragma Assert (Q = 5);
 
-      pragma Assert (Percent (1, 3) in 0 .. 100);  --  (1 * 100) / 3 = 33, "/" rundet ab
+      pragma
+        Assert
+          (Percent (1, 3) in 0 .. 100);  --  (1 * 100) / 3 = 33, "/" rundet ab
 
       Sign (7, S);
       pragma Assert (S = 1);
