@@ -1,0 +1,19 @@
+--  Loesungen zum Zulassungs-Audit: eigenes Projekt, gleiche Unit-Namen
+--  wie im Experiment. Beweisen mit:
+--
+--    alr exec -- gnatprove -P experiment/loesungen/loesungen.gpr --report=all
+
+project Loesungen is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+
+   --  avionics.ads/.adb folgen der Standard-Namensregel, ein Naming-
+   --  Paket ist nicht nötig.
+
+   --  Gleicher SPARK_Mode-Default wie das Hauptprojekt (spark.adc, UG 4.2.1).
+   package Compiler is
+      for Local_Configuration_Pragmas use "../../spark.adc";
+   end Compiler;
+
+end Loesungen;

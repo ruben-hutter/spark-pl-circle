@@ -1,0 +1,10 @@
+name = "spark_pl_circle"
+version = "0.1.0"
+description = "SPARK-Tutorial fuer die PL-Circle (Vericoding)"
+authors = ["pl-circle"]
+maintainers = ["PL-Circle <pl-circle@example.invalid>"]
+maintainers-logins = ["pl-circle"]
+executables = ["spark_pl_circle"]
+
+[[depends-on]]
+gnatprove = "^16.1.0"

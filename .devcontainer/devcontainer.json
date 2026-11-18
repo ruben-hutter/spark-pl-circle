@@ -1,0 +1,16 @@
+{
+  "name": "SPARK PL-Circle",
+  "hostRequirements": { "cpus": 2, "memory": "4gb" },
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "alr -n update",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "AdaCore.ada",
+        "EditorConfig.EditorConfig"
+      ]
+    }
+  }
+}

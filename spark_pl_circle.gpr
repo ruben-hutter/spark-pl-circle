@@ -1,0 +1,33 @@
+project Spark_Pl_Circle is
+
+   for Source_Dirs use ("tutorial", "experiment");
+   for Object_Dir use "obj";
+   for Exec_Dir use "bin";
+   for Main use ("05_run.adb");
+
+   --  Binary heisst spark_pl_circle (passt zu alire.toml), nicht 05_run.
+   package Builder is
+      for Executable ("05_run.adb") use "spark_pl_circle";
+   end Builder;
+
+   --  Kapitel-Dateien tragen Nummern-Praefixe; hier steht, welche Unit
+   --  in welcher Datei wohnt (damit die Reihenfolge im Ordner stimmt).
+   package Naming is
+      for Spec ("Hello")        use "00_hello.ads";
+      for Body ("Hello")        use "00_hello.adb";
+      for Spec ("Types")        use "01_types.ads";
+      for Body ("Types")        use "01_types.adb";
+      for Spec ("Functions")    use "02_functions.ads";
+      for Spec ("Contracts")    use "03_contracts.ads";
+      for Body ("Contracts")    use "03_contracts.adb";
+      for Spec ("Loops")        use "04_loops.ads";
+      for Body ("Loops")        use "04_loops.adb";
+      for Body ("Run")          use "05_run.adb";
+   end Naming;
+
+   --  SPARK_Mode (On) crate-weit als Default via spark.adc (SPARK UG 4.2.1).
+   package Compiler is
+      for Local_Configuration_Pragmas use "spark.adc";
+   end Compiler;
+
+end Spark_Pl_Circle;
