@@ -1,0 +1,11 @@
+--  Lösung zu Vericoding Runde 2: eigenes Projekt für die Referenz
+--  (Spezifikation + Code aus bms.ads/bms.adb in diesem Ordner). Prüfen:
+--
+--    alr exec -- gnatprove -P vericoding/loesungen/runde2/loesungen.gpr --report=all
+
+project Loesungen_Runde2 is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+
+end Loesungen_Runde2;

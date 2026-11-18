@@ -1,0 +1,11 @@
+--  Vericoding, Runde 2: Lastenheft an die KI, bms.ads + bms.adb kommen
+--  beide von der KI (Anleitung: vericoding/README.md). Beweisen mit:
+--
+--    alr exec -- gnatprove -P vericoding/runde2/runde2.gpr --report=all
+
+project Runde2 is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+
+end Runde2;

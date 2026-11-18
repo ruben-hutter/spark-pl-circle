@@ -1,0 +1,11 @@
+--  Vericoding, Runde 1: Spezifikation ist vorgegeben, bms.adb kommt
+--  von der KI (Anleitung: vericoding/README.md). Beweisen mit:
+--
+--    alr exec -- gnatprove -P vericoding/runde1/runde1.gpr --report=all
+
+project Runde1 is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+
+end Runde1;
