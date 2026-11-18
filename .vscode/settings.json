@@ -1,5 +1,4 @@
 {
-  "ada.projectFile": "spark_pl_circle.gpr",
   "[ada]": { "editor.tabSize": 3, "editor.insertSpaces": true, "editor.formatOnType": true },
   "[gpr]": { "editor.tabSize": 3, "editor.insertSpaces": true }
 }
