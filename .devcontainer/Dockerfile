@@ -1,5 +1,9 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
+# Automatic platform args (TARGETARCH, ...) sind nur im globalen Scope definiert;
+# leere Re-Deklaration im Stage-Scope, sonst ist TARGETARCH in RUNs unten leer.
+ARG TARGETARCH
+
 ARG ALR_VERSION=2.1.1
 ARG GNAT_VERSION=16.1.0
 ARG GPRBUILD_VERSION=26.0.1

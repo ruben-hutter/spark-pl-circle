@@ -3,7 +3,10 @@
 
   outputs = { self, nixpkgs }:
     let
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      # Kein x86_64-darwin: nixpkgs 26.11 (nixos-unstable) hat Intel-macOS
+      # eingestellt (stdenv evaluiert dort nicht mehr), 26.05 endet Mitte
+      # 2026 — deshalb auch keine Hash-Einträge dafür mehr.
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs systems (s: f nixpkgs.legacyPackages.${s});
 
       # gnat und gprbuild gibt es in nixpkgs nur in genau einer Version pro
@@ -22,7 +25,10 @@
         pkgs.stdenv.mkDerivation {
           inherit pname version;
           src = pkgs.fetchurl {
-            url = "https://github.com/alire-project/GNAT-FSF-builds/releases/download/${pname}-${version}-1/${pname}-${pkgs.stdenv.hostPlatform.uname.processor}-${pkgs.stdenv.hostPlatform.parsed.kernel.name}-${version}-1.tar.gz";
+            # uname.processor liefert auf macOS "arm64", die Release-Assets
+            # heissen aber aarch64-darwin — deshalb parsed.cpu.name, das
+            # überall den Asset-Namen (x86_64/aarch64) liefert.
+            url = "https://github.com/alire-project/GNAT-FSF-builds/releases/download/${pname}-${version}-1/${pname}-${pkgs.stdenv.hostPlatform.parsed.cpu.name}-${pkgs.stdenv.hostPlatform.parsed.kernel.name}-${version}-1.tar.gz";
             hash = hashes.${pkgs.stdenv.hostPlatform.system};
           };
           nativeBuildInputs = pkgs.lib.optional pkgs.stdenv.hostPlatform.isLinux pkgs.autoPatchelfHook;
@@ -47,10 +53,7 @@
       gnatHash = {
         x86_64-linux   = "sha256-n3T1ioJ6KtQN2ExypBPnXqUoiODY9+JS+6TSZ2JAJwM=";
         aarch64-linux  = "sha256-jil0l/LW1oRZIKNjone271vEVOSKZtDWBridceMe5iM=";
-        # Hash beim ersten macOS-Build von fetchurl ausdrucken lassen und
-        # eintragen.
-        x86_64-darwin  = nixpkgs.lib.fakeHash;
-        aarch64-darwin = nixpkgs.lib.fakeHash;
+        aarch64-darwin = "sha256-ZXzyVDI+uR95dokY6L2Ih9baesYFZzKjjyHihIJn2hg=";
       };
 
       # Achtung: alr meldet diese Version als "26.0.1" (Dockerfile:
@@ -60,15 +63,23 @@
       gprbuildHash = {
         x86_64-linux   = "sha256-4/J/JRXsBNlj9rra3mWVmTscCRuhXRkZp8darRt+1Js=";
         aarch64-linux  = "sha256-wSVCREcUSUSXPSTeQ6U7PnAI29owbg1UDbB+Y13qJOQ=";
-        x86_64-darwin  = nixpkgs.lib.fakeHash;
-        aarch64-darwin = nixpkgs.lib.fakeHash;
+        aarch64-darwin = "sha256-a/fYDIqXAthRxbmS18cqB6nb8T6N6ZR7gJJ+omZ7a+g=";
       };
 
       gnatformatHash = {
         x86_64-linux   = "sha256-C0gyTakwAdtwDKjk44sFdJn05Ik6yRekuslHfvWF2VU=";
         aarch64-linux  = "sha256-ZmBlFw/0bTNlJ+Tur5ZySTHgeLRgiBLZ9FA5lgHNrtw=";
-        x86_64-darwin  = "sha256-R5MubeTCIKNVRjJhmRzDPRKSGjUu2RpsgqcJUe8ovoM=";
         aarch64-darwin = "sha256-O34xky8/ab30uRuu5bE4AqEdbItbz8z+OEdwZ2mpbhI=";
+      };
+
+      # gnatprove 16.1.0 wie im dev container gepinnt (prime-alr-cache.sh:
+      # "gnatprove ^16.1.0"). Der Tarball ist self-contained — python und
+      # z3 liegen mit unter libexec/spark/bin/, ein separates python3 ist
+      # nicht nötig.
+      gnatproveHash = {
+        x86_64-linux   = "sha256-glKL7ymFfiOTc/zDZzKDfXQ/WgCAXVAscEVUIv/JcZE=";
+        aarch64-linux  = "sha256-7iK/DYD5o7+8HC5qy2gQKttC3PZ9GyRpOtMct5HLrVI=";
+        aarch64-darwin = "sha256-JHcvES3XoLr0AzPpFCkiswzN0ZuPcEQerIAGt4zf2Q0=";
       };
     in {
       devShells = forAllSystems (pkgs: {
@@ -77,6 +88,7 @@
             (fsfBuild pkgs "gnat" "16.1.0" gnatHash)
             (fsfBuild pkgs "gprbuild" "26.0.0" gprbuildHash)
             (fsfBuild pkgs "gnatformat" "26.0" gnatformatHash)
+            (fsfBuild pkgs "gnatprove" "16.1.0" gnatproveHash)
           ];
         };
       });
