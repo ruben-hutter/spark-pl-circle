@@ -89,6 +89,10 @@
             (fsfBuild pkgs "gprbuild" "26.0.0" gprbuildHash)
             (fsfBuild pkgs "gnatformat" "26.0" gnatformatHash)
             (fsfBuild pkgs "gnatprove" "16.1.0" gnatproveHash)
+            # alr als einzige Ausnahme aus nixpkgs: es baut selbst keine
+            # Artefakte, das Byte-Identitäts-Argument der Toolchain trifft
+            # hier nicht zu — so sparen wir uns die Hash-Pflege.
+            pkgs.alire
           ];
         };
       });

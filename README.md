@@ -74,6 +74,10 @@ TAB-Vervollständigung für `alr` funktioniert im Container. Alle gnatprove-Opti
 zeigt `alr exec -- gnatprove --help` (`alr gnatprove --help` funktioniert nicht,
 alr fängt den Help-Schalter vorher ab).
 
+Die `alr …`-Befehle laufen im dev container wie auf dem Host: Auch die
+Nix-DevShell (`nix develop`) stellt `alr` bereit — in derselben Version
+(2.1.1) wie im Container.
+
 Einzelnes Unterprogramm geht mit
 `--limit-subp=00_hello.adb:3` (nur Dateiname, ohne `tutorial/`-Präfix).
 
