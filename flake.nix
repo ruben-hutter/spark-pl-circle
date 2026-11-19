@@ -15,8 +15,7 @@
       # Binary-Releases aus GNAT-FSF-builds, die alr im container installiert
       # (s. .devcontainer/Dockerfile) — so sind Host und Container
       # byte-identisch und im gemeinsamen obj/-Verzeichnis mischen sich keine
-      # Toolchains mehr. gnatformat ist ohnehin nicht in nixpkgs und lief
-      # schon immer über dieselbe Quelle.
+      # Toolchains mehr.
       #
       # Die Binaries sind nur gegen libc/libstdc++ dynamisch gelinkt: auf
       # Linux setzt autoPatchelfHook die RPATHs auf die Nix-Store-Pfade,
@@ -66,29 +65,68 @@
         aarch64-darwin = "sha256-a/fYDIqXAthRxbmS18cqB6nb8T6N6ZR7gJJ+omZ7a+g=";
       };
 
-      gnatformatHash = {
-        x86_64-linux   = "sha256-C0gyTakwAdtwDKjk44sFdJn05Ik6yRekuslHfvWF2VU=";
-        aarch64-linux  = "sha256-ZmBlFw/0bTNlJ+Tur5ZySTHgeLRgiBLZ9FA5lgHNrtw=";
-        aarch64-darwin = "sha256-O34xky8/ab30uRuu5bE4AqEdbItbz8z+OEdwZ2mpbhI=";
+      # ada_language_server für den Host-LSP (nvim: ada_ls) — derselbe
+      # Binär-Release-Ansatz wie die Toolchain, denn der ALS ist an die
+      # GNAT-Generation gekoppelt: 2027.0.202610121 ist auf dem Host-Rechner
+      # erfolgreich gegen gnat 16.1.0 gelaufen (Mason-Install, gleiche
+      # Version). Das Asset ist das VS-Code-Integration-Bundle: das Binary
+      # liegt unter integration/vscode/ada/<arch>/<os>/, installiert wird
+      # nur es (ohne .debug/dSYM). Linux braucht libgmp.so.10 und lässt
+      # autoPatchelfHook die RPATHs setzen; darwin bringt libgmp.10.dylib
+      # neben dem Binary mit (@executable_path) und läuft ohne.
+      alsPlatform = {
+        x86_64-linux   = "linux-x64";
+        aarch64-linux  = "linux-arm64";
+        aarch64-darwin = "darwin-arm64";
       };
 
-      # gnatprove 16.1.0 wie im dev container gepinnt (prime-alr-cache.sh:
-      # "gnatprove ^16.1.0"). Der Tarball ist self-contained — python und
-      # z3 liegen mit unter libexec/spark/bin/, ein separates python3 ist
-      # nicht nötig.
-      gnatproveHash = {
-        x86_64-linux   = "sha256-glKL7ymFfiOTc/zDZzKDfXQ/WgCAXVAscEVUIv/JcZE=";
-        aarch64-linux  = "sha256-7iK/DYD5o7+8HC5qy2gQKttC3PZ9GyRpOtMct5HLrVI=";
-        aarch64-darwin = "sha256-JHcvES3XoLr0AzPpFCkiswzN0ZuPcEQerIAGt4zf2Q0=";
+      alsHash = {
+        x86_64-linux   = "sha256-lxXwGbGTnBcYKTWTZzWc0pXwpOlhXW/qCAcFly4iCnA=";
+        aarch64-linux  = "sha256-APGIK9p7s8Sx1ZRkP1l9UIzXiDN6AxQGXQCgq+Xqy6Y=";
+        aarch64-darwin = "sha256-n0pJRGYT/hlsZhxjwyNduWM7An+XbqrWSJ7wQrMF2uw=";
       };
+
+      alsBuild = pkgs: version:
+        pkgs.stdenv.mkDerivation {
+          pname = "ada_language_server";
+          inherit version;
+          src = pkgs.fetchurl {
+            url = "https://github.com/AdaCore/ada_language_server/releases/download/${version}/als-${version}-${alsPlatform.${pkgs.stdenv.hostPlatform.system}}.tar.gz";
+            hash = alsHash.${pkgs.stdenv.hostPlatform.system};
+          };
+          nativeBuildInputs = pkgs.lib.optional pkgs.stdenv.hostPlatform.isLinux pkgs.autoPatchelfHook;
+          buildInputs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            pkgs.stdenv.cc.libc
+            pkgs.stdenv.cc.cc.lib # libgcc_s
+            pkgs.gmp # libgmp.so.10
+          ];
+          dontConfigure = true;
+          dontBuild = true;
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out/bin
+            alsBin="$(find . -type f -name ada_language_server -not -path '*dSYM*')"
+            install -m755 "$alsBin" $out/bin/ada_language_server
+            # Darwin: libgmp.10.dylib liegt neben dem Binary und wird über
+            # @executable_path gefunden — mit umziehen lassen (auf Linux
+            # greift der Glob ins Leere).
+            for dylib in "$(dirname "$alsBin")"/libgmp*.dylib; do
+              [ -e "$dylib" ] && install -m644 "$dylib" $out/bin/
+            done
+            runHook postInstall
+          '';
+        };
     in {
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
+          # Die Shell ist das Host-Minimum zum Editieren (nvim + ada_ls):
+          # gnat/gprbuild für den Editor-Index, alr als CLI, der ALS als
+          # LSP. Verifizieren, Bauen und Ausführen sind devpod-/Container-
+          # Territorium — gnatprove und gnatformat bewusst nicht hier.
           packages = [
             (fsfBuild pkgs "gnat" "16.1.0" gnatHash)
             (fsfBuild pkgs "gprbuild" "26.0.0" gprbuildHash)
-            (fsfBuild pkgs "gnatformat" "26.0" gnatformatHash)
-            (fsfBuild pkgs "gnatprove" "16.1.0" gnatproveHash)
+            (alsBuild pkgs "2027.0.202610121")
             # alr als einzige Ausnahme aus nixpkgs: es baut selbst keine
             # Artefakte, das Byte-Identitäts-Argument der Toolchain trifft
             # hier nicht zu — so sparen wir uns die Hash-Pflege.

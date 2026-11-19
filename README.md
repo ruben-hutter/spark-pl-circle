@@ -76,14 +76,16 @@ alr fängt den Help-Schalter vorher ab).
 
 Die `alr …`-Befehle laufen im dev container wie auf dem Host: Auch die
 Nix-DevShell (`nix develop`) stellt `alr` bereit — in derselben Version
-(2.1.1) wie im Container.
+(2.1.1) wie im Container. Die Nix-DevShell ist das Host-Minimum zum
+Editieren (gnat, gprbuild, `alr`, `ada_language_server` für den
+nvim-LSP); Verifizieren, Bauen und Ausführen laufen im
+dev container/devpod.
 
 Einzelnes Unterprogramm geht mit
 `--limit-subp=00_hello.adb:3` (nur Dateiname, ohne `tutorial/`-Präfix).
 
 Formatierung: Ada-Dateien folgen dem GNAT-Stil (3 Leerzeichen, Zeilen
-bis 79 Zeichen); `gnatformat` ist der Kanon und ist im dev container
-wie in der Nix-DevShell installiert. `--check` steigt mit Exit-Code 1
+bis 79 Zeichen); `gnatformat` ist der Kanon und ist im dev container installiert. `--check` steigt mit Exit-Code 1
 aus, wenn etwas unformatiert ist — gut für CI. Die `loesungen/`-Ordner
 liegen außerhalb des Projekts und werden einzeln formatiert:
 `gnatformat --charset utf-8 --no-project <datei>`.
