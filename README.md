@@ -55,57 +55,36 @@ git clone https://github.com/ruben-hutter/spark-pl-circle.git
 
 ## Befehle
 
+**Verifizieren**
+
 ```bash
-alr gnatprove -U --report=all          # alles verifizieren (auch die Fehler zeigen)
-alr gnatprove -u hello --report=all    # nur ein Kapitel verifizieren
-alr build                              # bauen
-./bin/spark_pl_circle                  # ausführen
-gnatformat -P spark_pl_circle.gpr -U --charset utf-8 --check   # Stil prüfen
-gnatformat -P spark_pl_circle.gpr -U --charset utf-8           # Stil anwenden
+alr gnatprove -U --report=all          # alle Units
+alr gnatprove -u hello --report=all    # nur eine Unit
 ```
 
-`-U` = alle Units prüfen (ohne prüft gnatprove nur das Hauptprogramm).
-`-u <unit>` = nur diese Unit prüfen. Unit-Namen der Kapitel: `hello`,
-`types`, `functions`, `contracts`, `loops`, `run` (Datei `0X_name.ads` →
-Unit `name`).
-`--report=all` zeigt auch die bewiesenen Checks; ohne sie sieht man nur Fehler.
+Ohne `-U`/`-u` prüft gnatprove nur das Hauptprogramm. Unit-Namen der Kapitel:
+`hello`, `types`, `functions`, `contracts`, `loops`, `run` (Datei `0X_name.ads`
+→ Unit `name`). `--report=all` zeigt auch die bewiesenen Checks, sonst sieht man
+nur Fehler. Einzelnes Unterprogramm: `--limit-subp=00_hello.adb:3` (nur
+Dateiname, ohne `tutorial/`-Präfix).
+
+**Bauen & Ausführen**
+
+```bash
+alr build
+./bin/spark_pl_circle
+```
+
+**Stil**
+
+```bash
+gnatformat -P spark_pl_circle.gpr -U --charset utf-8 --check   # prüfen
+gnatformat -P spark_pl_circle.gpr -U --charset utf-8           # anwenden
+```
 
 TAB-Vervollständigung für `alr` funktioniert im Container. Alle gnatprove-Optionen
 zeigt `alr exec -- gnatprove --help` (`alr gnatprove --help` funktioniert nicht,
 alr fängt den Help-Schalter vorher ab).
-
-Die `alr …`-Befehle laufen im dev container wie auf dem Host: Auch die
-Nix-DevShell (`nix develop`) stellt `alr` bereit — in derselben Version
-(2.1.1) wie im Container. Die Nix-DevShell ist das Host-Minimum zum
-Editieren (gnat, gprbuild, `alr`, `ada_language_server` für den
-nvim-LSP); Verifizieren, Bauen und Ausführen laufen im
-dev container/devpod.
-
-Einzelnes Unterprogramm geht mit
-`--limit-subp=00_hello.adb:3` (nur Dateiname, ohne `tutorial/`-Präfix).
-
-Formatierung: Ada-Dateien folgen dem GNAT-Stil (3 Leerzeichen, Zeilen
-bis 79 Zeichen); `gnatformat` ist der Kanon und ist im dev container installiert. `--check` steigt mit Exit-Code 1
-aus, wenn etwas unformatiert ist — gut für CI. Die `loesungen/`-Ordner
-liegen außerhalb des Projekts und werden einzeln formatiert:
-`gnatformat --charset utf-8 --no-project <datei>`.
-
----
-
-## Editoren
-
-Ada-Code in diesem Repo wird mit **3 Leerzeichen** eingerückt (GNAT-Stil);
-die Konfiguration ist im Repo committet und greift automatisch:
-
-- **VS Code**: Dev Container öffnen — oder ausserhalb des Containers die
-  beiden in `.vscode/extensions.json` empfohlenen Extensions
-  (`AdaCore.ada`, `EditorConfig.EditorConfig`) installieren. Tab/Einrückung
-  sind über `.vscode/settings.json` vorkonfiguriert.
-- **Neovim**: nichts zu tun, das eingebaute EditorConfig-Plugin wendet
-  `.editorconfig` an.
-
-Über die Basis-Einrückung hinaus entscheidet nicht die Hand, sondern
-`gnatformat` (siehe Befehle): fortlaufende Zeilen, Umbrüche, Aspekte.
 
 ---
 
